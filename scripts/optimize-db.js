@@ -1,49 +1,19 @@
-let Database;
-try {
-  Database = require('better-sqlite3');
-} catch (err) {
-  console.log('better-sqlite3 not found, falling back to sqlite3...');
-  const sqlite3 = require('sqlite3').verbose();
-  // Create a promise-based wrapper for sqlite3
-  Database = class {
-    constructor(dbPath) {
-      this.db = new sqlite3.Database(dbPath);
-    }
-
-    exec(sql) {
-      return new Promise((resolve, reject) => {
-        this.db.exec(sql, (err) => {
-          if (err) reject(err);
-          else resolve();
-        });
-      });
-    }
-
-    pragma(setting) {
-      return new Promise((resolve, reject) => {
-        this.db.exec(`PRAGMA ${setting};`, (err) => {
-          if (err) reject(err);
-          else resolve();
-        });
-      });
-    }
-
-    close() {
-      return new Promise((resolve, reject) => {
-        this.db.close((err) => {
-          if (err) reject(err);
-          else resolve();
-        });
-      });
-    }
-  };
-}
-
+const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const fs = require('fs').promises;
 require('dotenv').config();
 
 const dbPath = process.env.DB_PATH || path.join(__dirname, '../data/pantry.db');
+
+// Promisify database operations
+function runQuery(db, sql) {
+  return new Promise((resolve, reject) => {
+    db.exec(sql, (err) => {
+      if (err) reject(err);
+      else resolve();
+    });
+  });
+}
 
 async function ensureDbDirectory() {
   const dbDir = path.dirname(dbPath);
@@ -60,20 +30,19 @@ async function ensureDbDirectory() {
 async function optimizeDatabase() {
   await ensureDbDirectory();
   
-  let db;
+  const db = new sqlite3.Database(dbPath);
+  
   try {
-    db = new Database(dbPath);
     console.log('Successfully connected to database at:', dbPath);
-    
     console.log('Starting database optimization...');
 
     // Run VACUUM to reclaim unused space
     console.log('Running VACUUM...');
-    await db.exec('VACUUM;');
+    await runQuery(db, 'VACUUM;');
 
     // Analyze tables for query optimization
     console.log('Analyzing tables...');
-    await db.exec('ANALYZE;');
+    await runQuery(db, 'ANALYZE;');
 
     // Create indexes for commonly queried columns
     console.log('Creating/updating indexes...');
@@ -83,19 +52,25 @@ async function optimizeDatabase() {
       CREATE INDEX IF NOT EXISTS idx_items_quantity ON items(quantity);
       CREATE INDEX IF NOT EXISTS idx_categories_name ON categories(name);
     `;
-    await db.exec(createIndexes);
+    await runQuery(db, createIndexes);
 
     // Update table statistics
     console.log('Updating table statistics...');
-    await db.exec('ANALYZE sqlite_master;');
+    await runQuery(db, 'ANALYZE sqlite_master;');
 
     // Optimize database settings
     console.log('Optimizing database settings...');
-    await db.pragma('journal_mode = WAL');
-    await db.pragma('synchronous = NORMAL');
-    await db.pragma('temp_store = MEMORY');
-    await db.pragma('mmap_size = 30000000000');
-    await db.pragma('cache_size = -2000'); // Use 2MB of cache
+    const pragmas = [
+      'PRAGMA journal_mode = WAL;',
+      'PRAGMA synchronous = NORMAL;',
+      'PRAGMA temp_store = MEMORY;',
+      'PRAGMA mmap_size = 30000000000;',
+      'PRAGMA cache_size = -2000;'
+    ];
+
+    for (const pragma of pragmas) {
+      await runQuery(db, pragma);
+    }
 
     console.log('Database optimization completed successfully!');
   } catch (error) {
@@ -105,14 +80,13 @@ async function optimizeDatabase() {
     }
     throw error;
   } finally {
-    if (db) {
-      try {
-        await db.close();
+    db.close((err) => {
+      if (err) {
+        console.error('Error closing database connection:', err);
+      } else {
         console.log('Database connection closed successfully.');
-      } catch (closeError) {
-        console.error('Error closing database connection:', closeError);
       }
-    }
+    });
   }
 }
 

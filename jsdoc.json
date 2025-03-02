@@ -1,0 +1,31 @@
+{
+  "source": {
+    "include": ["./"],
+    "exclude": ["node_modules", "docs", "dist"],
+    "includePattern": ".+\\.js(x)?$",
+    "excludePattern": "(^|\\/|\\\\)_"
+  },
+  "plugins": ["plugins/markdown"],
+  "opts": {
+    "destination": "./docs/api",
+    "recurse": true,
+    "readme": "./README.md",
+    "template": "templates/default"
+  },
+  "templates": {
+    "cleverLinks": true,
+    "monospaceLinks": false,
+    "default": {
+      "outputSourceFiles": true,
+      "includeDate": false
+    }
+  },
+  "markdown": {
+    "hardwrap": false,
+    "idInHeadings": true
+  },
+  "tags": {
+    "allowUnknownTags": true,
+    "dictionaries": ["jsdoc", "closure"]
+  }
+} 

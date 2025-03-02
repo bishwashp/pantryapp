@@ -6,18 +6,7 @@ function checkSqliteInstallation() {
   console.log('Checking SQLite installation...');
 
   try {
-    // Try to require better-sqlite3
-    try {
-      require('better-sqlite3');
-      console.log('✓ better-sqlite3 is installed successfully');
-    } catch (err) {
-      console.log('× better-sqlite3 installation failed, attempting to fix...');
-      
-      // Try to reinstall better-sqlite3
-      execSync('npm install better-sqlite3 --save', { stdio: 'inherit' });
-    }
-
-    // Try to require sqlite3 as fallback
+    // Try to require sqlite3
     try {
       require('sqlite3');
       console.log('✓ sqlite3 is installed successfully');

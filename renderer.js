@@ -227,43 +227,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // Create category add form
     const addForm = document.createElement('div');
     addForm.className = 'category-add';
-    addForm.style.width = '100%';
-    addForm.style.maxWidth = '100%';
-    addForm.style.position = 'relative';
-    addForm.style.display = 'flex';
-    addForm.style.flexDirection = 'column';
-    addForm.style.gap = '6px';
     
     const inputWrapper = document.createElement('div');
-    inputWrapper.style.width = '100%';
-    inputWrapper.style.position = 'relative';
-    inputWrapper.style.display = 'flex';
-    inputWrapper.style.alignItems = 'center';
+    inputWrapper.className = 'input-wrapper';
     
     const input = document.createElement('input');
     input.type = 'text';
     input.placeholder = 'Category name';
-    input.style.width = '100%';
-    input.style.boxSizing = 'border-box';
-    input.style.paddingRight = '80px';
-    input.style.transition = 'border-color 0.2s ease';
-    input.style.border = '1px solid #E5E5EA';
-    input.style.borderRadius = '8px';
     
     const keepBtn = document.createElement('button');
     keepBtn.className = 'keep-button';
     keepBtn.textContent = 'Keep';
-    keepBtn.disabled = false;
-    keepBtn.style.position = 'absolute';
-    keepBtn.style.right = '0';
-    keepBtn.style.marginRight = '8px';
+    keepBtn.disabled = true;
     
     const errorMsg = document.createElement('div');
     errorMsg.className = 'error';
-    errorMsg.style.fontSize = '13px';
-    errorMsg.style.color = '#FF3B30';
-    errorMsg.style.width = '100%';
-    errorMsg.style.marginTop = '0';
     
     inputWrapper.appendChild(input);
     inputWrapper.appendChild(keepBtn);
@@ -287,24 +265,18 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (duplicate) {
           input.style.borderColor = '#FF3B30';
-          input.style.borderWidth = '1px';
-          keepBtn.style.opacity = '0.5';
-          keepBtn.style.pointerEvents = 'none';
           keepBtn.disabled = true;
+          keepBtn.classList.remove('visible');
           errorMsg.textContent = 'Already exists. Choose another name or select from the dropdown.';
         } else {
           input.style.borderColor = '#E5E5EA';
-          input.style.borderWidth = '1px';
-          keepBtn.style.opacity = '1';
-          keepBtn.style.pointerEvents = 'auto';
           keepBtn.disabled = false;
           keepBtn.classList.add('visible');
           errorMsg.textContent = '';
         }
       } else {
-        // Reset styles when input is empty
         input.style.borderColor = '#E5E5EA';
-        input.style.borderWidth = '1px';
+        keepBtn.disabled = true;
         keepBtn.classList.remove('visible');
         errorMsg.textContent = '';
       }
@@ -313,19 +285,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle Keep button click
     keepBtn.onclick = async () => {
       const name = input.value.trim();
-    if (name) {
-      try {
-        const id = await window.api.addCategory(name);
+      if (name) {
+        try {
+          const id = await window.api.addCategory(name);
           const option = document.createElement('option');
           option.value = id;
           option.textContent = name;
           categorySelect.appendChild(option);
-        categorySelect.value = id;
+          categorySelect.value = id;
           
           // Cleanup
           addForm.remove();
           currentSelect.style.display = '';
-      } catch (err) {
+        } catch (err) {
           console.error('Failed to add category:', err);
           errorMsg.textContent = 'Failed to add category';
         }

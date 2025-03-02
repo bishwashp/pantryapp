@@ -460,16 +460,23 @@ body {
 
 .modal-content {
   background: #fff;
-  padding: 20px;
+  padding: 24px;
   margin: 20px auto;
   width: 90%;
   max-width: 400px;
-  border-radius: 14px;
+  border-radius: 16px;
   position: relative;
   max-height: calc(100vh - 40px);
   overflow-y: auto;
   z-index: 1001;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.modal-content h2 {
+  margin: 0 0 24px 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1d1d1f;
 }
 
 /* Form styles */
@@ -489,18 +496,20 @@ body {
 .form-group select {
   width: 100%;
   padding: 12px 16px;
-  border: none;
-  border-radius: 14px;
+  border: 1px solid #E5E5EA;
+  border-radius: 12px;
   font-size: 15px;
   color: #1d1d1f;
   background: #f5f5f7;
   transition: all 0.2s ease;
+  box-sizing: border-box;
 }
 
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
-  background: #EBEBEB;
+  border-color: #007aff;
+  background: #fff;
 }
 
 .form-group select {
@@ -509,6 +518,122 @@ body {
   background-repeat: no-repeat;
   background-position: right 16px center;
   background-size: 12px;
+  padding-right: 40px;
+}
+
+/* Toggle container styles */
+.toggle-container {
+  display: flex;
+  background: #f5f5f7;
+  border-radius: 12px;
+  padding: 4px;
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 8px;
+}
+
+.toggle-option {
+  flex: 1;
+  padding: 10px 20px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 500;
+  color: #86868b;
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+  transition: color 0.3s ease;
+  border-radius: 8px;
+}
+
+.toggle-option.active {
+  color: #fff;
+}
+
+.toggle-container::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: calc(50% - 4px);
+  height: calc(100% - 8px);
+  background: #007aff;
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+  z-index: 1;
+}
+
+.toggle-container[data-active="exact"]::before {
+  transform: translateX(100%);
+}
+
+/* Form buttons */
+.submit-btn,
+#modal-close {
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  margin-right: 12px;
+}
+
+.submit-btn {
+  background: #007aff;
+  color: #fff;
+}
+
+.submit-btn:hover {
+  background: #0066d6;
+  transform: translateY(-1px);
+}
+
+#modal-close {
+  background: #f5f5f7;
+  color: #1d1d1f;
+}
+
+#modal-close:hover {
+  background: #e5e5ea;
+}
+
+#add-category-btn {
+  display: inline-block;
+  padding: 8px 16px;
+  margin-top: 8px;
+  background: transparent;
+  color: #007aff;
+  border: 1px solid #007aff;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+#add-category-btn:hover {
+  background: rgba(0, 122, 255, 0.1);
+}
+
+.error-message,
+#error-msg {
+  color: #FF3B30;
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+/* Exact fields group spacing */
+#exact-fields input,
+#exact-fields select {
+  margin-bottom: 16px;
+}
+
+#exact-fields input:last-of-type,
+#exact-fields select:last-of-type {
+  margin-bottom: 0;
 }
 
 /* Button styles */
@@ -613,4 +738,77 @@ body:has(#analytics.tab-content.active) #add-stock-btn {
     width: 100%;
     justify-content: flex-end;
   }
+}
+
+/* Category add form styles */
+.category-add {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.category-add .input-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.category-add input {
+  width: 100%;
+  padding: 12px 16px;
+  padding-right: 100px;
+  border: 1px solid #E5E5EA;
+  border-radius: 12px;
+  font-size: 15px;
+  color: #1d1d1f;
+  background: #f5f5f7;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.category-add input:focus {
+  outline: none;
+  border-color: #007aff;
+  background: #fff;
+}
+
+.keep-button {
+  position: absolute;
+  right: 8px;
+  padding: 6px 16px;
+  background: #007aff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(10px);
+}
+
+.keep-button.visible {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0);
+}
+
+.keep-button:hover {
+  background: #0066d6;
+}
+
+.keep-button:disabled {
+  background: #E5E5EA;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.category-add .error {
+  color: #FF3B30;
+  font-size: 13px;
+  margin-top: 6px;
 }
