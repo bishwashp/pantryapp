@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pantry Tracker</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <button id="add-stock-btn">Add Item</button>
+  
+  <div class="tabs">
+    <div class="tab active" data-tab="home">Home</div>
+    <div class="tab" data-tab="analytics">Analytics</div>
+    <div class="tab" data-tab="settings">Settings</div>
+  </div>
+
+  <div class="tab-content active" id="home"></div>
+  <div class="tab-content" id="analytics">
+    <div>
+      <button class="time-toggle" data-unit="day">Day</button>
+      <button class="time-toggle" data-unit="week">Week</button>
+      <button class="time-toggle" data-unit="month">Month</button>
+    </div>
+    <canvas id="analytics-chart"></canvas>
+  </div>
+  <div class="tab-content" id="settings"></div>
+  
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <h2 id="modal-title">Add Item</h2>
+      <form id="stock-form">
+        <div class="form-group">
+          <label for="stock-name">Name *</label>
+          <input type="text" id="stock-name" required>
+        </div>
+        <div class="form-group">
+          <label>Level Type</label>
+          <div class="toggle-container" data-active="basic">
+            <div class="toggle-option active" data-value="basic">Basic</div>
+            <div class="toggle-option" data-value="exact">Exact</div>
+            <div class="toggle-slider"></div>
+          </div>
+        </div>
+        <div id="basic-fields" class="form-group">
+          <label for="basic-level">Level</label>
+          <select id="basic-level">
+            <option value="full">Full</option>
+            <option value="half">Half</option>
+            <option value="refill">Refill</option>
+          </select>
+        </div>
+        <div id="exact-fields" class="form-group" style="display: none;">
+          <label for="exact-current">Current Amount *</label>
+          <input type="number" id="exact-current" min="0" step="0.01">
+          <label for="exact-full">Full Value *</label>
+          <input type="number" id="exact-full" min="0.01" step="0.01">
+          <label for="exact-unit">Unit</label>
+          <select id="exact-unit">
+            <option value="lb">lb</option>
+            <option value="kg">kg</option>
+            <option value="ml">ml</option>
+            <option value="fl.oz">fl.oz</option>
+            <option value="pieces">pieces</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="stock-category">Category *</label>
+          <select id="stock-category" required></select>
+          <button type="button" id="add-category-btn">+ New Category</button>
+        </div>
+        <div id="error-msg" class="error"></div>
+        <button type="submit" class="submit-btn">Save</button>
+        <button type="button" id="modal-close">Cancel</button>
+      </form>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.1/dist/chartjs-adapter-moment.min.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>
