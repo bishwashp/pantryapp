@@ -257,6 +257,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const value = input.value.trim();
       
       if (value) {
+        // Convert to sentence case for preview
+        const sentenceCaseValue = value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+        input.value = sentenceCaseValue;
+        
         // Check for duplicate names
         const categories = await window.api.getCategories();
         const duplicate = categories.find(c => 
@@ -793,7 +797,7 @@ document.addEventListener('DOMContentLoaded', () => {
         header.className = 'settings-header';
         
         const titleElement = document.createElement('h2');
-        titleElement.innerHTML = `<span class="collapse-indicator">▼</span> ${title}`;
+        titleElement.innerHTML = `<span class="collapse-indicator">▶</span> ${title}`;
         
         header.appendChild(titleElement);
         if (addButton) {
@@ -801,7 +805,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         const list = document.createElement('div');
-        list.className = 'settings-list';
+        list.className = 'settings-list collapsed';
         
         // Add click handler for collapsible functionality
         header.addEventListener('click', (e) => {
@@ -811,20 +815,19 @@ document.addEventListener('DOMContentLoaded', () => {
           const indicator = header.querySelector('.collapse-indicator');
           const isCollapsed = list.classList.contains('collapsed');
           
-          // Expand this section and collapse others
+          // First collapse all sections
           document.querySelectorAll('.settings-section').forEach(otherSection => {
             if (otherSection !== section) {
-              otherSection.querySelector('.settings-list').classList.add('collapsed');
-              otherSection.querySelector('.collapse-indicator').textContent = '▶';
-              otherSection.querySelector('.settings-header').classList.add('collapsed');
-              otherSection.classList.add('collapsed');
+              const otherList = otherSection.querySelector('.settings-list');
+              const otherIndicator = otherSection.querySelector('.collapse-indicator');
+              otherList.classList.add('collapsed');
+              otherIndicator.textContent = '▶';
             }
           });
           
+          // Then toggle this section
           list.classList.toggle('collapsed', !isCollapsed);
           indicator.textContent = isCollapsed ? '▼' : '▶';
-          header.classList.toggle('collapsed', !isCollapsed);
-          section.classList.toggle('collapsed', !isCollapsed);
         });
         
         section.appendChild(header);
@@ -857,7 +860,11 @@ document.addEventListener('DOMContentLoaded', () => {
           item.className = 'settings-item';
           
           const nameSpan = document.createElement('span');
-          nameSpan.textContent = c.name;
+          nameSpan.className = 'category-name';
+          
+          // Count items in this category
+          const categoryItems = stocks.filter(s => s.category_id === c.id);
+          nameSpan.innerHTML = `${c.name} <span class="item-count">${categoryItems.length} item${categoryItems.length !== 1 ? 's' : ''}</span>`;
           
           const controls = document.createElement('div');
           controls.className = 'item-controls';
@@ -1054,8 +1061,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (firstSection) {
         const list = firstSection.querySelector('.settings-list');
         const indicator = firstSection.querySelector('.collapse-indicator');
-        list.classList.remove('collapsed');
-        indicator.textContent = '▼';
+        list.classList.add('collapsed');
+        indicator.textContent = '▶';
       }
       
       console.log('Settings tab rendering complete');
