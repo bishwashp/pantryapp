@@ -259,12 +259,10 @@ body {
 #settings .settings-section {
   flex: 1;
   min-width: 300px;
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  overflow: hidden;
-  transition: all 0.3s ease;
   margin-bottom: 24px;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 #settings .settings-header {
@@ -272,13 +270,23 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
+  margin-bottom: 16px;
+  border-radius: 12px;
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(8px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   cursor: pointer;
   user-select: none;
-  border-radius: 12px;
-  margin-bottom: 16px;
+}
+
+#settings .settings-header h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1d1d1f;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 #settings .settings-header button {
@@ -311,9 +319,8 @@ body {
   opacity: 1;
   max-height: 1000px;
   overflow: hidden;
-  padding: 12px;
-  background: #fff;
-  border-radius: 0 0 16px 16px;
+  padding: 0;
+  margin: 0;
 }
 
 #settings .settings-list.collapsed {
@@ -323,14 +330,21 @@ body {
   padding: 0;
 }
 
+#settings .settings-list-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 #settings .settings-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px;
-  border-radius: 8px;
-  margin-bottom: 8px;
-  background: #f5f5f7;
+  padding: 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   transition: all 0.2s ease;
   position: relative;
   overflow: hidden;
@@ -366,6 +380,23 @@ body {
 #settings .settings-item:hover {
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+#settings .category-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  color: #1d1d1f;
+}
+
+#settings .item-count {
+  font-size: 13px;
+  font-weight: normal;
+  color: #86868b;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 2px 8px;
+  border-radius: 12px;
 }
 
 /* Analytics tab specific styles */

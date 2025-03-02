@@ -115,7 +115,10 @@ ipcMain.handle('get-categories', async () => {
 
 ipcMain.handle('add-category', async (event, name) => {
   return new Promise((resolve, reject) => {
-    db.run('INSERT INTO categories (name) VALUES (?)', [name], function(err) {
+    // Convert to sentence case: first letter uppercase, rest lowercase
+    const sentenceCaseName = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+    
+    db.run('INSERT INTO categories (name) VALUES (?)', [sentenceCaseName], function(err) {
       if (err) reject(err);
       else resolve(this.lastID);
     });
