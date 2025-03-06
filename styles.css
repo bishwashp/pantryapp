@@ -257,9 +257,11 @@ body {
 }
 
 #settings .settings-section {
-  flex: 1;
-  min-width: 300px;
-  margin-bottom: 24px;
+  background: white;
+  border-radius: 20px;
+  margin-bottom: 16px;
+  width: 100%;
+  max-width: 600px;
   opacity: 0;
   transform: translateY(10px);
   animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
@@ -270,13 +272,7 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  margin-bottom: 16px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(8px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   cursor: pointer;
-  user-select: none;
 }
 
 #settings .settings-header h2 {
@@ -291,27 +287,25 @@ body {
 
 #settings .settings-header button {
   padding: 8px 16px;
-  background: #007aff;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
+  border-radius: 12px;
+  font-size: 15px;
   font-weight: 500;
+  min-width: 100px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  pointer-events: auto;
-  z-index: 2;
 }
 
-#settings .settings-header button:hover {
-  background: #0066d6;
-  transform: translateY(-1px);
-}
-
-/* Prevent header click event from triggering when clicking the button */
-#settings .settings-header button:active,
-#settings .settings-header button:focus {
-  pointer-events: auto;
+/* Make all action buttons consistent */
+.settings-header button,
+.tab-content button[id$="-btn"] {
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  min-width: 100px;
+  background: #007AFF;
+  color: white;
+  border: none;
+  cursor: pointer;
 }
 
 #settings .settings-list {
@@ -503,11 +497,51 @@ body {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
-.modal-content h2 {
-  margin: 0 0 24px 0;
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.modal-header h2 {
+  margin: 0;
   font-size: 20px;
   font-weight: 600;
   color: #1d1d1f;
+}
+
+/* Close button styling for all modals */
+.modal-close {
+  position: absolute;
+  right: -12px;
+  top: -12px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 24px;
+  color: #86868b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+  padding: 0;
+}
+
+.modal-close:hover {
+  color: #1d1d1f;
+}
+
+/* Remove old close button styles */
+#modal-close {
+  display: none;
+}
+
+#category-modal-close {
+  display: none;
 }
 
 /* Form styles */
@@ -842,4 +876,185 @@ body:has(#analytics.tab-content.active) #add-stock-btn {
   color: #FF3B30;
   font-size: 13px;
   margin-top: 6px;
+}
+
+#category-modal .modal-content {
+  max-width: 400px;
+}
+
+#category-modal .form-group {
+  margin-bottom: 20px;
+}
+
+#category-modal label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 15px;
+  color: #1d1d1f;
+}
+
+#category-modal input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #E5E5EA;
+  border-radius: 14px;
+  background: #f5f5f7;
+  font-size: 15px;
+  color: #1d1d1f;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+
+#category-modal input:focus {
+  outline: none;
+  border-color: #007AFF;
+}
+
+#category-modal .error {
+  color: #FF3B30;
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+#category-modal .form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+#category-modal button[type="submit"] {
+  background: #007AFF;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+#category-modal button[type="submit"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+#category-modal button[type="submit"].success {
+  background: #34C759;
+}
+
+#category-modal button.secondary-button {
+  background: #f5f5f7;
+  color: #1d1d1f;
+  border: 1px solid #E5E5EA;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+#category-modal button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+#category-modal input {
+  transition: all 0.2s ease;
+}
+
+/* Button Styles */
+button {
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 15px;
+}
+
+.submit-btn {
+  background: #007AFF;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.submit-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.submit-btn.success {
+  background: #34C759;
+}
+
+.secondary-button {
+  background: #f5f5f7;
+  color: #1d1d1f;
+  border: 1px solid #E5E5EA;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.secondary-button:hover {
+  background: #e5e5ea;
+  transform: translateY(-1px);
+}
+
+/* Category button styling */
+.category-btn {
+  display: flex;
+  align-items: center;
+  background: transparent;
+  color: #007AFF;
+  border: none;
+  font-size: 16px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: normal;
+  transition: all 0.2s ease;
+}
+
+.category-btn:hover {
+  background: rgba(0, 122, 255, 0.1);
+}
+
+.category-btn svg, 
+.category-btn .plus-icon {
+  margin-right: 8px;
+  font-size: 18px;
+}
+
+/* For the "+ New Category" button specifically */
+.new-category-btn {
+  color: #007AFF;
+  background: transparent;
+  border: none;
+  padding: 8px 16px;
+  font-size: 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  width: auto;
+  margin-bottom: 16px;
+}
+
+.new-category-btn:hover {
+  background: rgba(0, 122, 255, 0.1);
+}
+
+.new-category-btn::before {
+  content: "+";
+  margin-right: 8px;
+  font-size: 18px;
 }

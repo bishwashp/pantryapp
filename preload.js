@@ -10,10 +10,15 @@ const api = {
     return result;
   },
   addCategory: async (name) => {
-    console.log('Calling addCategory:', name);
-    const result = await ipcRenderer.invoke('add-category', name);
-    console.log('addCategory result:', result);
-    return result;
+    console.log('Calling addCategory with name:', name);
+    try {
+      const result = await ipcRenderer.invoke('add-category', name);
+      console.log('addCategory result (new category ID):', result);
+      return result;
+    } catch (error) {
+      console.error('Error in addCategory:', error);
+      throw error;
+    }
   },
   deleteCategory: async (id) => {
     console.log('Calling deleteCategory:', id);
@@ -50,6 +55,26 @@ const api = {
     const result = await ipcRenderer.invoke('get-history');
     console.log('getHistory result:', result);
     return result;
+  },
+  debug: {
+    getDatabasePath: async () => {
+      console.log('Calling debug.getDatabasePath');
+      const result = await ipcRenderer.invoke('debug-get-database-path');
+      console.log('debug.getDatabasePath result:', result);
+      return result;
+    },
+    inspectCategories: async () => {
+      console.log('Calling debug.inspectCategories');
+      const result = await ipcRenderer.invoke('debug-inspect-categories');
+      console.log('debug.inspectCategories result:', result);
+      return result;
+    },
+    addTestCategory: async (name) => {
+      console.log('Calling debug.addTestCategory with name:', name);
+      const result = await ipcRenderer.invoke('debug-add-test-category', name);
+      console.log('debug.addTestCategory result:', result);
+      return result;
+    }
   }
 };
 

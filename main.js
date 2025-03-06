@@ -15,12 +15,42 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.js')
     }
   });
-  mainWindow.loadFile('index.html');
+  
+  // Check if we should load the debug page
+  const shouldDebug = process.argv.includes('--debug');
+  
+  if (shouldDebug) {
+    console.log('Loading debug page');
+    mainWindow.loadFile('debug.html');
+    // Open dev tools automatically in debug mode
+    mainWindow.webContents.openDevTools();
+  } else {
+    console.log('Loading main app');
+    mainWindow.loadFile('index.html');
+  }
 }
 
 function initializeDatabase() {
-  const dbPath = path.join(app.getPath('userData'), 'pantry.db');
-  console.log('Database path:', dbPath);
+  // Determine if we're in development mode
+  const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged;
+  console.log('App is running in', isDev ? 'development' : 'production', 'mode');
+  
+  // Choose the appropriate database path based on mode
+  let dbPath;
+  if (isDev) {
+    // Use a local data directory in development mode
+    const dataDir = path.join(__dirname, 'data');
+    // Create data directory if it doesn't exist
+    if (!require('fs').existsSync(dataDir)) {
+      require('fs').mkdirSync(dataDir, { recursive: true });
+    }
+    dbPath = path.join(dataDir, 'pantry.db');
+    console.log('Using development database at:', dbPath);
+  } else {
+    // Use the standard user data path in production
+    dbPath = path.join(app.getPath('userData'), 'pantry.db');
+    console.log('Using production database at:', dbPath);
+  }
   
   db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
@@ -114,13 +144,48 @@ ipcMain.handle('get-categories', async () => {
 });
 
 ipcMain.handle('add-category', async (event, name) => {
+  console.log('Main process: add-category handler called with name:', name);
   return new Promise((resolve, reject) => {
     // Convert to sentence case: first letter uppercase, rest lowercase
     const sentenceCaseName = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+    console.log('Main process: Inserting category with name:', sentenceCaseName);
     
-    db.run('INSERT INTO categories (name) VALUES (?)', [sentenceCaseName], function(err) {
-      if (err) reject(err);
-      else resolve(this.lastID);
+    // First check if this category already exists
+    db.get('SELECT id FROM categories WHERE LOWER(name) = LOWER(?)', [sentenceCaseName], (err, row) => {
+      if (err) {
+        console.error('Main process: Error checking for existing category:', err);
+        reject(err);
+        return;
+      }
+      
+      if (row) {
+        console.log('Main process: Category already exists with ID:', row.id);
+        reject(new Error('A category with this name already exists'));
+        return;
+      }
+      
+      // Insert the new category
+      db.run('INSERT INTO categories (name) VALUES (?)', [sentenceCaseName], function(err) {
+        if (err) {
+          console.error('Main process: Error inserting category:', err);
+          reject(err);
+        } else {
+          const newId = this.lastID;
+          console.log('Main process: Category inserted successfully with ID:', newId);
+          
+          // Verify the category was added
+          db.get('SELECT * FROM categories WHERE id = ?', [newId], (err, row) => {
+            if (err) {
+              console.error('Main process: Error verifying new category:', err);
+              // Still resolve with the ID since the insert succeeded
+              resolve(newId);
+            } else {
+              console.log('Main process: Verified new category:', row);
+              resolve(newId);
+            }
+          });
+        }
+      });
     });
   });
 });
@@ -303,6 +368,61 @@ ipcMain.handle('get-history', async () => {
     `, (err, rows) => {
       if (err) reject(err);
       else resolve(rows);
+    });
+  });
+});
+
+// Debug handlers
+ipcMain.handle('debug-get-database-path', async () => {
+  const userDataPath = app.getPath('userData');
+  const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged;
+  
+  let dbPath;
+  if (isDev) {
+    dbPath = path.join(__dirname, 'data', 'pantry.db');
+  } else {
+    dbPath = path.join(userDataPath, 'pantry.db');
+  }
+  
+  return {
+    userDataPath,
+    dbPath,
+    isDev,
+    appPath: app.getAppPath(),
+    cwd: process.cwd(),
+  };
+});
+
+ipcMain.handle('debug-inspect-categories', async () => {
+  return new Promise((resolve, reject) => {
+    db.all('SELECT * FROM categories', (err, rows) => {
+      if (err) reject(err);
+      else resolve(rows);
+    });
+  });
+});
+
+ipcMain.handle('debug-add-test-category', async (event, name) => {
+  console.log('[DEBUG] Adding test category:', name);
+  return new Promise((resolve, reject) => {
+    db.run('INSERT INTO categories (name) VALUES (?)', [name], function(err) {
+      if (err) {
+        console.error('[DEBUG] Error inserting test category:', err);
+        reject(err);
+      } else {
+        const newId = this.lastID;
+        console.log('[DEBUG] Test category inserted with ID:', newId);
+        
+        // Verify the category was added
+        db.all('SELECT * FROM categories', (err, rows) => {
+          if (err) {
+            console.error('[DEBUG] Error verifying categories after insert:', err);
+          } else {
+            console.log('[DEBUG] All categories after insert:', rows);
+          }
+          resolve(newId);
+        });
+      }
     });
   });
 });
