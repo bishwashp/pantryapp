@@ -15,19 +15,16 @@
   </div>
 
   <div class="tab-content active" id="home"></div>
-  <div class="tab-content" id="analytics">
-    <div>
-      <button class="time-toggle" data-unit="day">Day</button>
-      <button class="time-toggle" data-unit="week">Week</button>
-      <button class="time-toggle" data-unit="month">Month</button>
-    </div>
-    <canvas id="analytics-chart"></canvas>
-  </div>
+  <div class="tab-content" id="analytics"></div>
   <div class="tab-content" id="settings"></div>
   
+  <!-- Stock Modal -->
   <div id="modal" class="modal">
     <div class="modal-content">
-      <h2 id="modal-title">Add Item</h2>
+      <div class="modal-header">
+        <h2 id="modal-title">Add Item</h2>
+        <button class="modal-close">&times;</button>
+      </div>
       <form id="stock-form">
         <div class="form-group">
           <label for="stock-name">Name *</label>
@@ -64,16 +61,40 @@
           </select>
         </div>
         <div class="form-group">
-          <label for="stock-category">Category *</label>
+          <label for="stock-category">Category</label>
           <select id="stock-category" required></select>
-          <button type="button" id="add-category-btn">+ New Category</button>
+          <button type="button" id="add-category-btn" class="new-category-btn">New Category</button>
         </div>
         <div id="error-msg" class="error"></div>
-        <button type="submit" class="submit-btn">Save</button>
-        <button type="button" id="modal-close">Cancel</button>
+        <div class="form-actions">
+          <button type="submit" class="submit-btn">Save</button>
+          <button type="button" class="secondary-button">Cancel</button>
+        </div>
       </form>
     </div>
   </div>
+
+  <!-- Add Category Modal -->
+  <div id="category-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="category-modal-title">Add Category</h2>
+        <button class="modal-close">&times;</button>
+      </div>
+      <form id="category-form">
+        <div class="form-group">
+          <label for="category-name">Name *</label>
+          <input type="text" id="category-name" required>
+          <div id="category-error-msg" class="error"></div>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="submit-btn">Save</button>
+          <button type="button" class="secondary-button">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.1/dist/chartjs-adapter-moment.min.js"></script>
